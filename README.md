@@ -1,28 +1,54 @@
-# ComfyUI-ImageMask-Fix
+# ComfyUI Fit Mask to Image
 
 $badges
 
-ComfyUI custom node for automatically fixing dimension mismatches between masks and images
+Automatically resizes masks to match image dimensions for seamless inpainting workflows.
 
 ## Overview
 
+This node replaces a 10-node workflow chain with a single, efficient node that automatically scales masks to match image dimensions. Perfect for inpainting workflows where masks and images come from different sources.
+
 ## Features
 
-- Feature 1
-- Feature 2
-- Feature 3
+- **One-Node Solution**: Replaces 10-node workflow with single node
+- **Smart Dimension Matching**: Automatically scales masks to match image dimensions
+- **Multiple Outputs**: Fixed mask, preview image, debug mask, and masked latent
+- **Inpainting Ready**: Direct integration with KSampler via latent output
+- **Debug Information**: Detailed info output showing dimension changes
 
 ## Installation
 
+### Method 1: Symlink (Recommended for Development)
 ```bash
-# Installation instructions here
+cd C:\code\ComfyUI_experiment\custom_nodes
+mklink /D imagemask-fix C:\code\ComfyUI-ImageMask-Fix\local
 ```
+
+### Method 2: Direct Copy
+```bash
+cd C:\code\ComfyUI_experiment\custom_nodes
+cp -r C:\code\ComfyUI-ImageMask-Fix\local imagemask-fix
+```
+
+Then restart ComfyUI.
 
 ## Usage
 
-```bash
-# Usage examples here
-```
+1. Add "Fit Mask to Image" node to your workflow (found under "DazzleNodes")
+2. Connect your source IMAGE (for dimension reference)
+3. Connect your MASK (to fix dimensions)
+4. Optionally connect a LATENT for inpainting workflows
+
+### Outputs
+
+- **fixed_mask**: Final mask with corrected dimensions (from alpha channel)
+- **preview_image**: RGB+alpha merged image for visual verification
+- **info**: Text showing original→target dimensions and processing status
+- **masked_latent**: Latent with mask applied (if latent input provided)
+
+### Example Workflow
+
+See `examples/` folder for workflow JSON files demonstrating the node in action
 
 ## Development
 
