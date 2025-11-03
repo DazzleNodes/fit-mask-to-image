@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for ComfyUI-ImageMask-Fix
+about: Suggest an idea for Fit Mask to Image
 title: "[FEATURE] "
 labels: enhancement
 assignees: ''

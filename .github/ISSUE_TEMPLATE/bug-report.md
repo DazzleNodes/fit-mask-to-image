@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help improve ComfyUI-ImageMask-Fix
+about: Create a report to help improve Fit Mask to Image
 title: "[BUG] "
 labels: bug
 assignees: ''
@@ -23,7 +23,9 @@ If applicable, add screenshots to help explain your problem.
 
 **Environment:**
 - OS:
-- Version:
+- ComfyUI Version:
+- Python Version:
+- Node Version:
 
 **Additional context**
 Add any other context about the problem here.
