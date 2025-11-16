@@ -30,6 +30,10 @@ class FitMaskToImage:
             "required": {
                 "image": ("IMAGE",),  # Source image for dimension reference
                 "mask": ("MASK",),    # Mask to fix dimensions
+                "missing_mask": (
+                    ["all_visible", "all_hidden", "error"],
+                    {"default": "all_visible"}
+                ),  # How to handle empty/missing masks
             },
             "optional": {
                 "latent": ("LATENT",),  # Optional latent for inpainting
@@ -46,6 +50,7 @@ class FitMaskToImage:
         self,
         image: torch.Tensor,
         mask: torch.Tensor,
+        missing_mask: str = "all_visible",
         latent: Optional[Dict[str, Any]] = None
     ) -> Tuple[torch.Tensor, torch.Tensor, str, Optional[Dict[str, Any]]]:
         """
@@ -54,6 +59,7 @@ class FitMaskToImage:
         Args:
             image: Source image [B, H, W, C] for dimension reference
             mask: Mask to fix [B, H, W] or [B, H, W, 1]
+            missing_mask: How to handle empty masks ("all_visible", "all_hidden", "error")
             latent: Optional latent dict with "samples" key
 
         Returns:
@@ -65,6 +71,21 @@ class FitMaskToImage:
 
         # Step 1: Extract dimensions from source image (ImpactImageInfo equivalent)
         target_height, target_width = self._extract_dimensions(image)
+
+        # Check if mask is empty and handle according to missing_mask parameter
+        if self._is_mask_empty(mask):
+            if missing_mask == "error":
+                raise ValueError(
+                    "Empty mask provided. Connect a mask or change 'missing_mask' parameter."
+                )
+            # Generate mask based on missing_mask mode
+            mask = self._generate_fill_mask(
+                mode=missing_mask,
+                height=target_height,
+                width=target_width,
+                batch_size=image.shape[0]
+            )
+
         original_height, original_width = self._get_mask_dimensions(mask)
 
         # Step 2: Convert mask to image format (MaskToImage equivalent)
@@ -337,6 +358,52 @@ class FitMaskToImage:
             info_lines.append("Latent: Mask applied")
 
         return "\n".join(info_lines)
+
+    def _is_mask_empty(self, mask: Optional[torch.Tensor]) -> bool:
+        """
+        Check if mask is None, empty, or all zeros.
+
+        Args:
+            mask: Mask tensor to check
+
+        Returns:
+            True if mask should be considered empty
+        """
+        if mask is None:
+            return True
+        if mask.numel() == 0:
+            return True
+        if torch.all(mask == 0):
+            return True
+        return False
+
+    def _generate_fill_mask(
+        self,
+        mode: str,
+        height: int,
+        width: int,
+        batch_size: int = 1
+    ) -> torch.Tensor:
+        """
+        Generate a mask based on missing_mask mode.
+
+        Args:
+            mode: One of "all_visible", "all_hidden"
+            height: Target mask height
+            width: Target mask width
+            batch_size: Batch size for tensor
+
+        Returns:
+            Generated mask tensor [B, H, W]
+        """
+        if mode == "all_visible":
+            # All visible: mask value 1.0 (white / 0xFF)
+            return torch.ones(batch_size, height, width, dtype=torch.float32)
+        elif mode == "all_hidden":
+            # All hidden: mask value 0.0 (black / 0x00)
+            return torch.zeros(batch_size, height, width, dtype=torch.float32)
+        else:
+            raise ValueError(f"Unknown missing_mask mode: {mode}")
 
 
 # Node registration

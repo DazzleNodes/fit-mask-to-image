@@ -15,6 +15,7 @@ This node solves a common inpainting problem: when your KSampler output dimensio
 
 - **One-Node Solution**: Replaces 10-node workflow with single node
 - **Smart Dimension Matching**: Automatically scales masks to match image dimensions
+- **Missing Mask Handling**: Auto-generates masks when none provided (default: entire image visible)
 - **Multiple Outputs**: Fixed mask, preview image, debug mask, and masked latent
 - **Inpainting Ready**: Direct integration with KSampler via latent output
 - **Debug Information**: Detailed info output showing dimension changes
@@ -69,7 +70,15 @@ This node is also included in the [DazzleNodes](https://github.com/DazzleNodes/D
 1. Add "Fit Mask to Image" node to your workflow (found under "DazzleNodes")
 2. Connect your source **IMAGE** (for dimension reference)
 3. Connect your **MASK** (to fix dimensions)
-4. Optionally connect a **LATENT** for inpainting workflows
+4. Set **missing_mask** parameter (default: `all_visible` - shows entire image when no mask provided)
+5. Optionally connect a **LATENT** for inpainting workflows
+
+### Missing Mask Handling
+
+The `missing_mask` parameter controls what happens when no mask is connected or mask is empty:
+- **all_visible** (default): Creates white mask (entire image visible)
+- **all_hidden**: Creates black mask (entire image masked)
+- **error**: Fails with error message (useful for debugging)
 
 ### Outputs
 
