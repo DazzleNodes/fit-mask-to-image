@@ -31,8 +31,8 @@ class FitMaskToImage:
                 "image": ("IMAGE",),  # Source image for dimension reference
                 "mask": ("MASK",),    # Mask to fix dimensions
                 "missing_mask": (
-                    ["all_visible", "all_hidden", "pass_through", "error"],
-                    {"default": "all_visible"}
+                    ["pass_through", "all_visible", "all_hidden", "error"],
+                    {"default": "pass_through"}
                 ),  # How to handle empty/missing masks
             },
             "optional": {
@@ -50,7 +50,7 @@ class FitMaskToImage:
         self,
         image: torch.Tensor,
         mask: torch.Tensor,
-        missing_mask: str = "all_visible",
+        missing_mask: str = "pass_through",
         latent: Optional[Dict[str, Any]] = None
     ) -> Tuple[torch.Tensor, torch.Tensor, str, Optional[Dict[str, Any]]]:
         """

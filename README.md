@@ -70,15 +70,15 @@ This node is also included in the [DazzleNodes](https://github.com/DazzleNodes/D
 1. Add "Fit Mask to Image" node to your workflow (found under "DazzleNodes")
 2. Connect your source **IMAGE** (for dimension reference)
 3. Connect your **MASK** (to fix dimensions)
-4. Set **missing_mask** parameter (default: `all_visible` - shows entire image when no mask provided)
+4. Set **missing_mask** parameter (default: `pass_through` - preserves original behavior)
 5. Optionally connect a **LATENT** for inpainting workflows
 
 ### Missing Mask Handling
 
 The `missing_mask` parameter controls what happens when no mask is connected or mask is empty:
-- **all_visible** (default): Creates white mask (entire image visible)
+- **pass_through** (default): Process empty mask as-is (original behavior)
+- **all_visible**: Creates white mask (entire image visible)
 - **all_hidden**: Creates black mask (entire image masked)
-- **pass_through**: Process empty mask as-is (original behavior)
 - **error**: Fails with error message (useful for debugging)
 
 ### Outputs
