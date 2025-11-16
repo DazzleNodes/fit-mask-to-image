@@ -78,6 +78,7 @@ This node is also included in the [DazzleNodes](https://github.com/DazzleNodes/D
 The `missing_mask` parameter controls what happens when no mask is connected or mask is empty:
 - **all_visible** (default): Creates white mask (entire image visible)
 - **all_hidden**: Creates black mask (entire image masked)
+- **pass_through**: Process empty mask as-is (original behavior)
 - **error**: Fails with error message (useful for debugging)
 
 ### Outputs

@@ -31,7 +31,7 @@ class FitMaskToImage:
                 "image": ("IMAGE",),  # Source image for dimension reference
                 "mask": ("MASK",),    # Mask to fix dimensions
                 "missing_mask": (
-                    ["all_visible", "all_hidden", "error"],
+                    ["all_visible", "all_hidden", "pass_through", "error"],
                     {"default": "all_visible"}
                 ),  # How to handle empty/missing masks
             },
@@ -59,7 +59,7 @@ class FitMaskToImage:
         Args:
             image: Source image [B, H, W, C] for dimension reference
             mask: Mask to fix [B, H, W] or [B, H, W, 1]
-            missing_mask: How to handle empty masks ("all_visible", "all_hidden", "error")
+            missing_mask: How to handle empty masks ("all_visible", "all_hidden", "pass_through", "error")
             latent: Optional latent dict with "samples" key
 
         Returns:
@@ -73,7 +73,8 @@ class FitMaskToImage:
         target_height, target_width = self._extract_dimensions(image)
 
         # Check if mask is empty and handle according to missing_mask parameter
-        if self._is_mask_empty(mask):
+        # "pass_through" skips this check entirely (original behavior)
+        if missing_mask != "pass_through" and self._is_mask_empty(mask):
             if missing_mask == "error":
                 raise ValueError(
                     "Empty mask provided. Connect a mask or change 'missing_mask' parameter."
